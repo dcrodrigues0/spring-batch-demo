@@ -19,6 +19,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
+import java.util.function.BiConsumer;
 
 import static java.util.stream.Collectors.toList;
 
@@ -36,7 +37,7 @@ public class DataHandlingBatch {
     private CustomerAnalyticsRepository customerAnalyticsRepository;
 
     @Autowired
-    private static CustomerEligibleRepository customerEligibleRepository;
+    private CustomerEligibleRepository customerEligibleRepository;
 
     @Bean
     public Job jobBuilder(){
@@ -49,8 +50,8 @@ public class DataHandlingBatch {
 
     private Step stepBuilder() {
         return stepBuilderFactory
-                .get("printMessage")
-                .<CustomerAnalyticsDto, CustomerAnalyticsDto>chunk(1)
+                .get("handleCustomerData")
+                .<CustomerAnalyticsDto, CustomerAnalyticsDto>chunk(3)
                 .reader(readAnalyticsCustomer())
                 .processor(filterCustomer())
                 .writer(writeFilteredCustomer())
@@ -71,23 +72,21 @@ public class DataHandlingBatch {
 
     public FunctionItemProcessor<CustomerAnalyticsDto, CustomerAnalyticsDto> filterCustomer(){
         return new FunctionItemProcessor<CustomerAnalyticsDto, CustomerAnalyticsDto>
-                (customer -> customer.getCity().equals("SP")?customer:null);
+                (customer -> customer.getCity().equals("SP") ? customer:null);
     }
 
     public ItemWriter<CustomerAnalyticsDto> writeFilteredCustomer(){
-        return DataHandlingBatch::saveCustomers;
+        return customers -> {
+            ModelMapper modelMapper = new ModelMapper();
+            customerEligibleRepository.saveAll(
+                customers
+                    .stream()
+                    .map(customerAnalyticsDto -> modelMapper.map(customerAnalyticsDto, CustomerEligible.class))
+                    .collect(toList())
+            );
+            customers.forEach(System.out::println);
+        };
     }
 
-    private static void saveCustomers(List<? extends CustomerAnalyticsDto> customers) {
-        customers.forEach(System.out::println);
-        //TODO FIX SAVE ALL :)
-//        ModelMapper modelMapper = new ModelMapper();
-//        customerEligibleRepository.saveAll(
-//                customers
-//                        .stream()
-//                        .map(customerAnalyticsDto -> modelMapper.map(customerAnalyticsDto, CustomerEligible.class))
-//                        .collect(toList())
-//        );
-    }
 
 }

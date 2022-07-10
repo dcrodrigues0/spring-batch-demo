@@ -1,4 +1,4 @@
-package com.batch.demo.batchs;
+package com.batch.demo.batchs.dataProcessing.job;
 
 import com.batch.demo.dtos.CustomerAnalyticsDto;
 import com.batch.demo.entitys.CustomerEligible;
@@ -19,13 +19,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
-import java.util.function.BiConsumer;
 
 import static java.util.stream.Collectors.toList;
 
 @EnableBatchProcessing
 @Configuration
-public class DataHandlingBatch {
+public class DataTreatmentJob {
 
     @Autowired
     private JobBuilderFactory jobBuilderFactory;
@@ -42,7 +41,7 @@ public class DataHandlingBatch {
     @Bean
     public Job jobBuilder(){
         return jobBuilderFactory
-                .get("dataHandling") //This is the job name
+                .get("dataTreatment") //This is the job name
                 .start(stepBuilder()) //Method started by job, start can handle with Steps and Flows
                 .incrementer(new RunIdIncrementer())
                 .build();
@@ -51,7 +50,7 @@ public class DataHandlingBatch {
     private Step stepBuilder() {
         return stepBuilderFactory
                 .get("handleCustomerData")
-                .<CustomerAnalyticsDto, CustomerAnalyticsDto>chunk(3)
+                .<CustomerAnalyticsDto, CustomerAnalyticsDto>chunk(2)
                 .reader(readAnalyticsCustomer())
                 .processor(filterCustomer())
                 .writer(writeFilteredCustomer())

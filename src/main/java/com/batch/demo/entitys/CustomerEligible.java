@@ -1,15 +1,12 @@
 package com.batch.demo.entitys;
 
-
-
 import javax.persistence.*;
 
 import static javax.persistence.GenerationType.AUTO;
 
 @Entity
-@Table(name = "CUSTOMER_ANALYTICS")
-public class CustomerAnalytics {
-
+@Table(name = "CUSTOMER_ELIGIBLE")
+public class CustomerEligible {
     @Id
     @Column(name = "ID")
     @GeneratedValue(strategy= AUTO)
@@ -20,9 +17,6 @@ public class CustomerAnalytics {
 
     @Column(name = "FIRSTNAME")
     private String firstName;
-
-    @Column(name = "AGE")
-    private int age;
 
     @Column(name = "CITY")
     private String city;
@@ -39,13 +33,23 @@ public class CustomerAnalytics {
         return firstName;
     }
 
-    public int getAge() {
-        return age;
-    }
-
     public String getCity() {
         return city;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
 }

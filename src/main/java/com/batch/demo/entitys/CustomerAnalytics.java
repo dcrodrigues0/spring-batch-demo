@@ -2,14 +2,12 @@ package com.batch.demo.entitys;
 
 
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 import static javax.persistence.GenerationType.AUTO;
 
 @Entity
+@Table(name = "CUSTOMER_ANALYTICS")
 public class CustomerAnalytics {
 
     @Id

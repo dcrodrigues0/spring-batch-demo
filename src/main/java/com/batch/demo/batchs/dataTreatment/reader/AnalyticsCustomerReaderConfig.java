@@ -21,6 +21,7 @@ public class AnalyticsCustomerReaderConfig {
     @Bean
     public IteratorItemReader<CustomerAnalyticsDto> analyticsCustomerReader(){
         //TODO Change this modelMapper to interface mapper
+        //TODO Handle with pagination here
         ModelMapper modelMapper = new ModelMapper();
         List<CustomerAnalyticsDto> customers =
                 customerAnalyticsRepository.findAll()

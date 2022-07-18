@@ -2,7 +2,6 @@ package com.batch.demo.dtos;
 
 public class CustomerAnalyticsDto {
 
-    private Integer id;
     private String lastName;
     private String firstName;
     private int age;
@@ -10,10 +9,6 @@ public class CustomerAnalyticsDto {
 
     public CustomerAnalyticsDto() {
 
-    }
-
-    public Integer getId() {
-        return id;
     }
 
     public String getLastName() {
@@ -30,10 +25,6 @@ public class CustomerAnalyticsDto {
 
     public String getCity() {
         return city;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public void setLastName(String lastName) {
@@ -55,7 +46,6 @@ public class CustomerAnalyticsDto {
     @Override
     public String toString() {
         return "CustomerAnalyticsDto{" +
-                "id=" + id +
                 ", lastName='" + lastName + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", age=" + age +

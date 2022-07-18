@@ -11,7 +11,7 @@ public class AnalyticsCustomerProcessorConfig {
     @Bean
     public FunctionItemProcessor<CustomerAnalyticsDto, CustomerAnalyticsDto> analyticsCustomerProcessor(){
         return new FunctionItemProcessor<CustomerAnalyticsDto, CustomerAnalyticsDto>
-                (customer -> customer.getCity().equals("SP") ? customer:null);
+                (customer -> customer.getFirstName().equals("SP") ? customer:null);
     }
 
 }

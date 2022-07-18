@@ -20,7 +20,7 @@ public class DataSourceConfig {
 
     @Bean
     @ConfigurationProperties(prefix = "analytics.datasource")
-    public DataSource appDataSource(){
+    public DataSource analyticsDataSource(){
         return DataSourceBuilder.create().build();
     }
 

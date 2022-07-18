@@ -1,11 +1,12 @@
 package com.batch.demo.batchs.dataTreatment.step;
 
 import com.batch.demo.dtos.CustomerAnalyticsDto;
+import com.batch.demo.dtos.CustomerEligibleDto;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.database.JdbcBatchItemWriter;
+import org.springframework.batch.item.database.JdbcPagingItemReader;
 import org.springframework.batch.item.function.FunctionItemProcessor;
-import org.springframework.batch.item.support.IteratorItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,14 +18,14 @@ public class DataTreatmentStep {
     private StepBuilderFactory stepBuilderFactory;
 
     @Bean //It's necessary register stepBuilder with Bean to use it in jobBuilder(DataTreatmentJob.class)
-    public Step stepBuilder(IteratorItemReader<CustomerAnalyticsDto> analyticsCustomerReader,
+    public Step stepBuilder(JdbcPagingItemReader<CustomerAnalyticsDto> analyticsCustomerReader,
                             FunctionItemProcessor<CustomerAnalyticsDto, CustomerAnalyticsDto> analyticsCustomerProcessor,
-                            ItemWriter<CustomerAnalyticsDto> writeFilteredCustomer) {
+                            JdbcBatchItemWriter<CustomerEligibleDto> writeFilteredCustomer) {
         return stepBuilderFactory
                 .get("handleCustomerData")
-                .<CustomerAnalyticsDto, CustomerAnalyticsDto>chunk(2)
+                .<CustomerAnalyticsDto, CustomerEligibleDto>chunk(2)
                 .reader(analyticsCustomerReader)
-                .processor(analyticsCustomerProcessor)
+                .processor(analyticsCustomerProcessor) //TODO Fix processor implementation
                 .writer(writeFilteredCustomer)
                 .build();
     }

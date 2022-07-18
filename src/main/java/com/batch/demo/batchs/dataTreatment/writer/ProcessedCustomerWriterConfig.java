@@ -1,15 +1,17 @@
 package com.batch.demo.batchs.dataTreatment.writer;
 
 import com.batch.demo.dtos.CustomerAnalyticsDto;
-import com.batch.demo.entitys.CustomerEligible;
+import com.batch.demo.dtos.CustomerEligibleDto;
 import com.batch.demo.repositories.CustomerEligibleRepository;
-import org.modelmapper.ModelMapper;
-import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.database.ItemPreparedStatementSetter;
+import org.springframework.batch.item.database.JdbcBatchItemWriter;
+import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import static java.util.stream.Collectors.toList;
+import javax.sql.DataSource;
 
 @Configuration
 public class ProcessedCustomerWriterConfig {
@@ -18,16 +20,22 @@ public class ProcessedCustomerWriterConfig {
     private CustomerEligibleRepository customerEligibleRepository;
 
     @Bean
-    public ItemWriter<CustomerAnalyticsDto> writeFilteredCustomer(){
-        return customers -> {
-            ModelMapper modelMapper = new ModelMapper();
-            customerEligibleRepository.saveAll(
-                    customers
-                            .stream()
-                            .map(customerAnalyticsDto -> modelMapper.map(customerAnalyticsDto, CustomerEligible.class))
-                            .collect(toList())
-            );
-            customers.forEach(System.out::println);
+    public JdbcBatchItemWriter<CustomerEligibleDto> writeFilteredCustomer(
+            @Qualifier("springDataSource") DataSource dataSource
+            ){
+
+        return new JdbcBatchItemWriterBuilder<CustomerEligibleDto>()
+                .dataSource(dataSource)
+                .sql("INSERT INTO CUSTOMER_ELIGIBLE (CITY, FIRSTNAME, LASTNAME) VALUES (?, ?, ?)")
+                .itemPreparedStatementSetter(itemPreparedStatementSetter())
+                .build();
+    }
+
+    private ItemPreparedStatementSetter<CustomerEligibleDto> itemPreparedStatementSetter() {
+        return (customer, preparedStatement) -> {
+            preparedStatement.setString(1, customer.getCity());
+            preparedStatement.setString(2, customer.getFirstName());
+            preparedStatement.setString(3, customer.getLastName());
         };
     }
 

@@ -52,4 +52,5 @@ public class CustomerEligible {
     public void setCity(String city) {
         this.city = city;
     }
+
 }

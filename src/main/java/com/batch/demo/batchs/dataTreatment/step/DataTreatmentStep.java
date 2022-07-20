@@ -2,6 +2,7 @@ package com.batch.demo.batchs.dataTreatment.step;
 
 import com.batch.demo.dtos.CustomerAnalyticsDto;
 import com.batch.demo.dtos.CustomerEligibleDto;
+import com.batch.demo.entitys.CustomerEligible;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
@@ -19,11 +20,11 @@ public class DataTreatmentStep {
 
     @Bean //It's necessary register stepBuilder with Bean to use it in jobBuilder(DataTreatmentJob.class)
     public Step stepBuilder(JdbcPagingItemReader<CustomerAnalyticsDto> analyticsCustomerReader,
-                            FunctionItemProcessor<CustomerAnalyticsDto, CustomerAnalyticsDto> analyticsCustomerProcessor,
-                            JdbcBatchItemWriter<CustomerEligibleDto> writeFilteredCustomer) {
+                            FunctionItemProcessor<CustomerAnalyticsDto, CustomerEligible> analyticsCustomerProcessor,
+                            JdbcBatchItemWriter<CustomerEligible> writeFilteredCustomer) {
         return stepBuilderFactory
                 .get("handleCustomerData")
-                .<CustomerAnalyticsDto, CustomerEligibleDto>chunk(2)
+                .<CustomerAnalyticsDto, CustomerEligible>chunk(2)
                 .reader(analyticsCustomerReader)
                 .processor(analyticsCustomerProcessor) //TODO Fix processor implementation
                 .writer(writeFilteredCustomer)
